@@ -23,6 +23,8 @@ The goal wasn't just to make the program work. Throughout development, I focused
 - Optionally associate transactions with a person
 - Display transactions in a formatted terminal table
 
+<img width="1488" height="499" alt="Screenshot 2026-08-17 225514" src="https://github.com/user-attachments/assets/ca4604e4-b36a-4af7-8e29-4465dc046c8c" />
+
 ### Person Tracking
 
 Transactions can optionally be associated with a person.
@@ -65,6 +67,8 @@ Dad pays the remaining $300
 → Balance becomes $0.00
 → Settled
 ```
+
+<img width="1811" height="714" alt="Screenshot 2026-08-17 233800" src="https://github.com/user-attachments/assets/090aecdf-d15c-4fa0-b548-addd1a6150d0" />
 
 The sign of the person balance represents the financial relationship from my perspective:
 
@@ -363,6 +367,13 @@ The current version has been tested manually through the command-line interface.
 
 These limitations are intentional opportunities for future versions.
 
+
+### Learning to Refactor
+
+One of the biggest things I noticed while building this project was that some functions were becoming too busy. Even when the code worked, I started recognizing that a function shouldn't have to handle every little responsibility itself. I learned to move separate pieces of logic into their own functions and let functions work together instead of making one function do everything. For example, I separated input and validation into functions like `get_amount()`, `get_transaction_date()`, and `get_relationship()`, while `view_person_history()` simply collects the person's name and passes it to `view_transactions()`. This taught me that clean code isn't just about making something work—it's also about making the code easier to understand, maintain, and improve.
+
+<img width="1811" height="714" alt="Screenshot 2026-08-17 233800" src="https://github.com/user-attachments/assets/5d9ce5f3-7144-42c4-a02a-d6b6aee785cd" />
+
 ---
 
 ## Planned Improvements
@@ -479,8 +490,6 @@ The core financial tracking functionality is implemented and manually tested.
 The next major milestone is persistent storage using JSON.
 
 ---
-
-## Author
 
 Built from scratch as a Python learning project.
 
