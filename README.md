@@ -68,7 +68,7 @@ Dad pays the remaining $300
 → Settled
 ```
 
-<img width="1811" height="714" alt="Screenshot 2026-08-17 233800" src="https://github.com/user-attachments/assets/090aecdf-d15c-4fa0-b548-addd1a6150d0" />
+<img width="791" height="839" alt="Screenshot 2026-08-17 203814" src="https://github.com/user-attachments/assets/a1283a60-0c2b-4704-85af-bd0ca8d9ff79" />
 
 The sign of the person balance represents the financial relationship from my perspective:
 
