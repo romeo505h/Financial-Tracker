@@ -119,7 +119,7 @@ Python's formatted string syntax is used extensively for:
 - two decimal places
 - positive/negative display signs
 
-One interesting formatting lesson from the project was discovering that `datetime.date` objects behave differently from strings when formatting them, which led me to explicitly convert dates to strings for terminal formatting.
+One interesting formatting lesson from the project was learning how datetime.date objects behave when displayed and formatted in f-strings, which led me to explicitly convert dates to strings for consistent terminal output.
 
 ---
 
