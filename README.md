@@ -23,8 +23,6 @@ The goal wasn't just to make the program work. Throughout development, I focused
 - Optionally associate transactions with a person
 - Display transactions in a formatted terminal table
 
-<img width="1488" height="499" alt="Screenshot 2026-08-17 225514" src="https://github.com/user-attachments/assets/ca4604e4-b36a-4af7-8e29-4465dc046c8c" />
-
 ### Person Tracking
 
 Transactions can optionally be associated with a person.
@@ -32,7 +30,6 @@ Transactions can optionally be associated with a person.
 For example:
 
 - Dad
-- Brother
 - Friend
 - Roommate
 
@@ -68,8 +65,6 @@ Dad pays the remaining $300
 → Settled
 ```
 
-<img width="791" height="839" alt="Screenshot 2026-08-17 203814" src="https://github.com/user-attachments/assets/a1283a60-0c2b-4704-85af-bd0ca8d9ff79" />
-
 The sign of the person balance represents the financial relationship from my perspective:
 
 ```text
@@ -77,6 +72,8 @@ The sign of the person balance represents the financial relationship from my per
 - amount → I am the debtor
 $0.00    → Settled
 ```
+
+<img width="791" height="839" alt="view-person-balance-refactored" src="https://github.com/user-attachments/assets/0a82a0d5-82ce-4049-8773-8403253b8e20" />
 
 ---
 
@@ -119,7 +116,7 @@ Python's formatted string syntax is used extensively for:
 - two decimal places
 - positive/negative display signs
 
-One interesting formatting lesson from the project was learning how datetime.date objects behave when displayed and formatted in f-strings, which led me to explicitly convert dates to strings for consistent terminal output.
+One interesting formatting lesson from the project was discovering that `datetime.date` objects behave differently from strings when formatting them, which led me to explicitly convert dates to strings for terminal formatting.
 
 ---
 
@@ -367,13 +364,6 @@ The current version has been tested manually through the command-line interface.
 
 These limitations are intentional opportunities for future versions.
 
-
-### Learning to Refactor
-
-One of the biggest things I noticed while building this project was that some functions were becoming too busy. Even when the code worked, I started recognizing that a function shouldn't have to handle every little responsibility itself. I learned to move separate pieces of logic into their own functions and let functions work together instead of making one function do everything. For example, I separated input and validation into functions like `get_amount()`, `get_transaction_date()`, and `get_relationship()`, while `view_person_history()` simply collects the person's name and passes it to `view_transactions()`. This taught me that clean code isn't just about making something work—it's also about making the code easier to understand, maintain, and improve.
-
-<img width="1811" height="714" alt="Screenshot 2026-08-17 233800" src="https://github.com/user-attachments/assets/5d9ce5f3-7144-42c4-a02a-d6b6aee785cd" />
-
 ---
 
 ## Planned Improvements
@@ -489,8 +479,420 @@ The core financial tracking functionality is implemented and manually tested.
 
 The next major milestone is persistent storage using JSON.
 
+
+__________________________________________________________________________________________________________________________________________________________________
+
+# Financial Tracker V2
+
+A beginner-to-intermediate Python command-line financial tracker built from scratch.
+
+This project started as a simple transaction tracker and gradually grew into a more structured application for managing income, expenses, personal transactions, lending, borrowing, and balances.
+
+V2 builds directly on the limitations of the first version. The biggest change is persistent storage, but I also expanded the application with transaction editing, deletion, stronger input validation, custom exception handling, and more complete transaction management.
+
+The goal is still the same: not just making the program work, but understanding why it works, how the data should be structured, and how the program should respond to different user situations.
+
+> **Current version: v2.0 — JSON-backed financial tracker**
+
+---
+
+## Features
+
+### Transaction Management
+
+* Add income and expense transactions
+* Enter and validate transaction amounts
+* Support decimal amounts and large values
+* Add categories and descriptions
+* Assign dates manually or use today's date
+* Optionally associate transactions with a person
+* View transactions in a formatted terminal table
+* Edit existing transactions
+* Delete transactions with confirmation
+* Cancel an operation at any point where cancellation is supported
+
+<img width="1363" height="626" alt="Transaction-Deletion" src="https://github.com/user-attachments/assets/8b0848e5-4bd1-4cc3-91fb-951f99fc8d3e" />
+
+
+### Persistent Storage
+
+Unlike V1, transactions are no longer lost when the program closes.
+
+V2 stores transaction data in:
+
+```text
+transactions.json
+```
+
+The program loads existing transactions when it starts and saves changes when transactions are added, edited, or deleted.
+
+It also handles a missing file and detects corrupted JSON data instead of immediately terminating.
+
+The current data is still represented using Python lists and dictionaries. JSON is being used as the storage layer rather than a database.
+
+---
+
+## Person Tracking
+
+Transactions can optionally be associated with a person.
+
+For example:
+
+```text
+Dad
+Brother
+Friend
+Roommate
+```
+
+The tracker can then:
+
+* View transactions involving a specific person
+* Calculate the balance associated with that person
+* Determine whether I am the creditor or debtor
+* Detect when the balance is settled
+
+The person balance is calculated from the relationship attached to each transaction.
+
+---
+
+## Lending & Borrowing
+
+When a person is attached to a transaction, the user can specify:
+
+```text
+1. Normal transaction
+2. I lent money
+3. I borrowed money
+```
+
+For example:
+
+```text
+I lend Dad $500
+→ Dad owes me $500
+→ Creditor: +$500.00
+
+Dad pays me back $200
+→ Balance becomes +$300.00
+
+Dad pays the remaining $300
+→ Balance becomes $0.00
+→ Settled
+```
+
+The sign of the person balance represents the financial relationship from my perspective:
+
+```text
++ amount → I am the creditor
+- amount → I am the debtor
+$0.00    → Settled
+```
+
+This was one of the main design ideas carried forward from V1. Rather than creating a completely separate loan system, lending and borrowing are represented as relationships attached to normal transactions.
+
+This allows the application to keep a person's transaction history while also calculating the current balance.
+
+---
+
+## Input Validation
+
+The program validates several types of user input instead of assuming everything entered is correct.
+
+Examples include:
+
+* Invalid transaction types
+* Invalid numeric amounts
+* Zero or negative amounts
+* Invalid dates
+* Invalid menu choices
+* Invalid transaction numbers
+* Invalid relationship choices
+* Invalid edit choices
+
+The program uses loops to allow the user to correct invalid input instead of terminating.
+
+V2 also introduces a custom `TransactionCancelled` exception, which provides a consistent way to exit operations such as adding, editing, or deleting a transaction.
+
+---
+
+## Financial Calculations
+
+The tracker can calculate:
+
+```text
+Total income
+Total expenses
+Balance
+```
+
+Income and expenses are calculated from the stored transactions, with the current balance being the difference between the two.
+
+---
+
+## Main Menu
+
+```text
+=====================
+  FINANCIAL TRACKER
+=====================
+1. Add transaction
+2. View transactions
+3. View balance
+4. View person history
+5. View person balance
+6. Delete transaction
+7. Edit transaction
+8. Exit
+```
+
+The menu expanded from V1 as new responsibilities were added to the application.
+
+---
+
+## Data Model
+
+Each transaction is represented as a Python dictionary:
+
+```python
+transaction = {
+    'type': transaction_type,
+    'amount': amount,
+    'category': category,
+    'person': person,
+    'relationship': relationship,
+    'description': description,
+    'date': transaction_date
+}
+```
+
+All transactions are stored in a list before being serialized to JSON.
+
+One of the important design decisions in the project is keeping the transaction's **type** separate from its **relationship**:
+
+```text
+type
+→ income / expense
+
+relationship
+→ normal / lent / borrowed
+```
+
+This separation makes it possible to calculate normal financial balances and person-specific balances using different pieces of information.
+
+It also reflects one of the main lessons from V1: data modeling becomes more important as the application starts representing real-world situations.
+
+---
+
+## V1 → V2
+
+V2 was built around the limitations of the first version.
+
+### V1
+
+The first version focused on:
+
+* Building the core transaction system
+* Working with lists and dictionaries
+* Input validation
+* Person tracking
+* Lending and borrowing logic
+* Terminal formatting
+* Function design and program structure
+
+However, the data only existed while the program was running. There was also no way to edit or delete an existing transaction.
+
+### V2
+
+V2 adds:
+
+* Persistent JSON storage
+* Loading saved transactions
+* Saving changes to disk
+* Editing transactions
+* Deleting transactions
+* Deletion confirmation
+* Custom exception handling
+* More complete cancellation flows
+* Improved transaction management
+
+The main progression wasn't just adding more features.
+
+It was moving from a program that could **record data** toward one that can **manage data throughout its lifecycle**.
+
+---
+
+## What I Learned
+
+This project has taught me more than simply writing Python syntax.
+
+Some of the main areas I have worked with include:
+
+* Lists and dictionaries
+* Functions and parameters
+* Return values
+* Conditional statements
+* `for` and `while` loops
+* `try` / `except`
+* Custom exceptions
+* File handling
+* JSON serialization
+* Date handling
+* Input validation
+* CRUD operations
+* Data persistence
+* Data modeling
+* String formatting
+* Basic application state
+
+One of the most useful lessons has been learning to separate responsibilities between functions.
+
+For example:
+
+```text
+view_person_history()
+        ↓
+asks for and validates a person
+        ↓
+view_transactions(person=name)
+        ↓
+filters and displays matching transactions
+```
+
+Instead of making one function responsible for everything, different functions handle different parts of the process.
+
+Another important lesson has been that a program can work technically while still having design problems. Adding new features often raises questions that cannot be solved by syntax alone:
+
+* Where should validation happen?
+* What information belongs in the transaction?
+* What should be calculated instead of stored?
+* What should happen when the user cancels?
+* How should lending and borrowing affect a balance?
+* What should happen when existing data is edited or deleted?
+
+Those questions have been a major part of my progression from learning individual Python concepts toward thinking more about application design.
+
+<img width="601" height="611" alt="class-TransactionCancellation" src="https://github.com/user-attachments/assets/7acac47b-eb04-4e2f-98db-ae2280b4391b" />
+
+---
+
+## Current Limitations
+
+V2 is still a learning project, so there are several areas that I want to improve.
+
+### Single Python File
+
+The application is still contained in one Python file.
+
+As the project grows, separating responsibilities into multiple modules should make the code easier to maintain.
+
+### JSON Instead of a Database
+
+JSON works well for the current size of the project, but it is not intended to be the final storage solution.
+
+SQLite would be a next step.
+
+### No Automated Tests
+
+The application has primarily been tested manually through the command-line interface.
+
+Adding unit tests would make it easier to verify calculations and edge cases as the project becomes more complex.
+
+### Limited Reporting
+
+The current version provides overall balances and person-specific balances, but does not yet include more advanced reporting such as:
+
+* Category summaries
+* Monthly spending
+* Date-range filtering
+* Spending trends
+* Financial reports
+
+These are possible directions for future versions.
+
+---
+
+## Future Improvements
+
+Some of the improvements I would like to explore are:
+
+* Refactor the application into multiple modules
+* Introduce a dedicated transaction model
+* Add automated tests
+* Add transaction search and filtering
+* Add category summaries
+* Add monthly and yearly reports
+* Add CSV import/export
+* Move from JSON to SQLite
+* Improve the terminal interface
+* Eventually explore a graphical or web interface
+
+---
+
+## Development Approach
+
+The project has been developed incrementally.
+
+I did not try to design the entire application before writing it. Instead, I built a feature, tested it, encountered a problem, investigated the behavior, and then changed the design where necessary.
+
+That process has led to most of the improvements between V1 and V2.
+
+The project is therefore not meant to represent perfect architecture or production-ready software. It represents a practical learning progression where each version introduces a new problem to solve.
+
+---
+
+## Tech Stack
+
+* **Python 3**
+* Python standard library
+* `json`
+* `datetime`
+* Command-line interface
+* JSON file storage
+* No external dependencies
+
+---
+
+## How to Run
+
+Clone the repository:
+
+```bash
+git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
+```
+
+Navigate to the project:
+
+```bash
+cd YOUR-REPOSITORY
+```
+
+Run the application:
+
+```bash
+python financial_tracker.py
+```
+
+The application will create or use `transactions.json` for persistent transaction storage.
+
+---
+
+## Project Status
+
+**Version:** v2.0
+**Status:** Working
+**Type:** Personal learning project
+**Language:** Python
+**Storage:** JSON
+**Interface:** Command line
+
+V2 is another step in my progression from learning Python fundamentals toward building more structured applications.
+
+The next version will focus less on simply adding features and more on improving architecture, testing, maintainability, and scalability.
+
 ---
 
 Built from scratch as a Python learning project.
 
-This project is part of my progression from beginner Python programming toward intermediate software development, with an emphasis on understanding the reasoning behind the code rather than simply making the program run.
+The purpose of this project is not to present a finished financial application, but to document my progression as I learn how to turn Python fundamentals into increasingly structured and practical software.
+
