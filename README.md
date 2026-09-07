@@ -1,4 +1,4 @@
-# Financial Tracker
+# Financial Tracker V1 & V2
 
 A beginner-to-intermediate Python command-line financial tracker built from scratch.
 
