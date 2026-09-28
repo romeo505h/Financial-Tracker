@@ -858,13 +858,13 @@ The project is therefore not meant to represent perfect architecture or producti
 Clone the repository:
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
+git clone https://github.com/romeo505h/Financial-Tracker.git
 ```
 
 Navigate to the project:
 
 ```bash
-cd YOUR-REPOSITORY
+cd Financial-Tracker
 ```
 
 Run the application:
@@ -891,6 +891,8 @@ V2 is another step in my progression from learning Python fundamentals toward bu
 The next version will focus less on simply adding features and more on improving architecture, testing, maintainability, and scalability.
 
 ---
+
+## Author Note
 
 Built from scratch as a Python learning project.
 
